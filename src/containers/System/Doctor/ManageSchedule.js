@@ -1,11 +1,15 @@
-import React, { Component } from 'react';
+import React, { useState, Component } from "react";
+//import React, { Component, } from 'react';
+//import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
 import { FormattedMessage } from 'react-intl';
 import './ManageSchedule.scss';
 import * as actions from "../../../store/actions";
 import Select from 'react-select';
 import { CRUD_ACTIONS, LANGUAGES, dateFormat } from '../../../utils';
-import DatePicker from '../../../components/Input/DatePicker';
+//import DatePicker from '../../../components/Input/DatePicker';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import _ from 'lodash';
@@ -18,10 +22,12 @@ class ManageSchedule extends Component {
         this.state = {
             listDoctors: [],
             selectedDoctor: {},
-            currentDate: '',
+            currentDate: {},
             rangeTime: [],
+            startDate: new Date(),
         }
     }
+
 
     componentDidMount() {
         this.props.fetchAllDoctors();
@@ -91,9 +97,27 @@ class ManageSchedule extends Component {
         // console.log('>>>>>>>> gia tri ban dau:', this.state.selectedDoctor);
     };
 
-    handleOnchangeDatePicker = (date) => {
+    // handleOnchangeDatePicker = (date) => {
+    //     console.log('gia tri ngay chon:', date[0])
+    //     let abc = moment(date[0]).format(dateFormat.SEND_TO_SERVER);
+    //     // let formatDate = moment(currentDate).unix();
+    //     //let abc = new Date(date[0]).getTime();
+    //     console.log('abc:', abc)
+    //     this.setState({
+    //         currentDate: abc
+    //     })
+    //     console.log('gia tri khoi tao date 1:', this.state.currentDate)
+    // }
+
+    setStartDate = (date) => {
+        let newDate = moment(date).format(dateFormat.SEND_TO_SERVER);
+        // let formatDate = moment(currentDate).unix();
+        //let abc = new Date(date[0]).getTime();
+        console.log('>>>>>>>>>>> selected date is:', newDate);
+        console.log('>>>>>>>>>>> type of the selected date is:', typeof newDate);
+
         this.setState({
-            currentDate: date[0]
+            startDate: date
         })
     }
 
@@ -112,17 +136,21 @@ class ManageSchedule extends Component {
         // console.log('>>>>>>>>>> gia tri moi sau khi duoc click:', rangeTime);
     }
 
-    handleSaveSchedule = () => {
-        let { rangeTime, selectedDoctor, currentDate } = this.state;
+    handleSaveSchedule = async () => {
+        let { rangeTime, selectedDoctor, startDate } = this.state;
+        console.log('rangTime-selecteDoctor,startDate ', rangeTime, selectedDoctor, startDate)
         let result = [];
-        console.log('currentDate: ', currentDate)
-        if (!currentDate) {
+        console.log('startDate: ', this.state.startDate)
+        if (!startDate) {
             toast.error('Invalid date!!!');
         }
         if (selectedDoctor && _.isEmpty(selectedDoctor)) {
             toast.error('Invalid selected doctor!')
         }
-        let formatDate = moment(currentDate).format(dateFormat.SEND_TO_SERVER);
+        let formatDate = moment(startDate).format(dateFormat.SEND_TO_SERVER);
+        // let formatDate = moment(currentDate).unix();
+        // let formatDate = new Date(currentDate).getTime();
+        console.log('gia tri cua currentDAte 2:', this.state.startDate);
         if (rangeTime && rangeTime.length > 0) {
             let selectedTime = rangeTime.filter(item => item.isSelected === true);
             if (selectedTime && selectedTime.length > 0) {
@@ -132,15 +160,24 @@ class ManageSchedule extends Component {
                     let object = {};
                     object.doctorId = selectedDoctor.value;
                     object.date = formatDate;
+                    //object.date = startDate;
                     object.timeType = schedule.keyMap;
                     result.push(object);
+                    console.log(">>>>>value of new result object:", result);
                 })
             } else {
                 toast.error('invalid selected time!');
                 return;
             }
         }
-
+        // console.log('>>>>>>>>> gia tri cua selectedDoctor:', selectedDoctor)
+        // console.log('>>>>>>>>> gia tri cua date:', startDate)
+        let res = await saveBulkScheduleDoctor({
+            arrSchedule: result,
+            doctorId: selectedDoctor.value,
+            date: formatDate
+        });
+        console.log('>>>>>>>>>>> check gia tri cuar result tra ve:', res);
         console.log('>>>>>>>>>>> check gia tri cuar result:', result);
 
         // console.log('>>>>>>>>>> check gia tri currentDate:', moment(currentDate).format('DD/MM/YYYY'))
@@ -154,7 +191,9 @@ class ManageSchedule extends Component {
         // console.log('hoi dan it check state:', this.state);
         // console.log('hoi dan it check props:', this.props);
         let { language } = this.props;
-        let { rangeTime } = this.state;
+        let { rangeTime, startDate } = this.state;
+        // const [startDate, setStartDate] = useState(new Date());
+
         return (
             <div className='manage-schedule-container'>
                 <div className='m-s-title'>
@@ -172,12 +211,13 @@ class ManageSchedule extends Component {
                         </div>
                         <div className='col-6 form-group'>
                             <label><FormattedMessage id="manage-schedule.choose-date" /></label>
-                            <DatePicker
-                                className=' form-control'
+                            {/* <DatePicker
+                                className='form-control'
                                 onChange={this.handleOnchangeDatePicker}
                                 value={this.state.currentDate}
                                 minDate={new Date()}
-                            />
+                            /> */}
+                            <DatePicker minDate={new Date()} selected={startDate} onChange={(date) => this.setStartDate(date)} />
                         </div>
                         <div className='col-12 pick-hour-container'>
                             {rangeTime && rangeTime.length > 0 &&
