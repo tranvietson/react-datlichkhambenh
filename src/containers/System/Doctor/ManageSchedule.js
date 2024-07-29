@@ -177,8 +177,19 @@ class ManageSchedule extends Component {
             doctorId: selectedDoctor.value,
             date: formatDate
         });
-        console.log('>>>>>>>>>>> check gia tri cuar result tra ve:', res);
-        console.log('>>>>>>>>>>> check gia tri cuar result:', result);
+        if (res && res.errCode === 0) {
+            toast.success('Save infor succeed');
+        } else {
+            if (res && res.errCode === 1) {
+                toast.warn('Schedule Doctor existed!!!');
+            } else {
+                toast.error("error saveBulkScheduleDoctor");
+                console.log("error saveBulkScheduleDoctor res:", res);
+            }
+
+        }
+        // console.log('>>>>>>>>>>> check gia tri cuar result tra ve:', res);
+        // console.log('>>>>>>>>>>> check gia tri cuar result:', result);
 
         // console.log('>>>>>>>>>> check gia tri currentDate:', moment(currentDate).format('DD/MM/YYYY'))
 
@@ -192,6 +203,7 @@ class ManageSchedule extends Component {
         // console.log('hoi dan it check props:', this.props);
         let { language } = this.props;
         let { rangeTime, startDate } = this.state;
+        let yesterday = new Date(new Date().setDate(new Date().getDate() - 1));
         // const [startDate, setStartDate] = useState(new Date());
 
         return (
@@ -217,7 +229,7 @@ class ManageSchedule extends Component {
                                 value={this.state.currentDate}
                                 minDate={new Date()}
                             /> */}
-                            <DatePicker minDate={new Date()} selected={startDate} onChange={(date) => this.setStartDate(date)} />
+                            <DatePicker minDate={yesterday} selected={startDate} onChange={(date) => this.setStartDate(date)} />
                         </div>
                         <div className='col-12 pick-hour-container'>
                             {rangeTime && rangeTime.length > 0 &&
