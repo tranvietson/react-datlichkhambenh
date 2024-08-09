@@ -219,6 +219,7 @@ class ManageSchedule extends Component {
                                 //value={this.state.selectedDoctor}
                                 onChange={(selectedOption) => this.handleChangeSelect(selectedOption)}
                                 options={this.state.listDoctors}
+
                             />
                         </div>
                         <div className='col-6 form-group'>
