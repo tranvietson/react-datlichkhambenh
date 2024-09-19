@@ -101,7 +101,13 @@ class ManageDoctor extends Component {
         return result;
     }
 
+    static getDerivedStateFromProps(props, state) {
+        console.log('>>>>>>>>>>>> call getDeriveStateFromProps:', props, state);
+        return state;
+
+    }
     componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('>>>>>>>>>>> check state in componentDidUPdate', this.state);
         if (prevProps.allDoctors !== this.props.allDoctors) {
             let dataSelect = this.buildDataInputSelect(this.props.allDoctors, 'USERS')
             console.log('check dataselect: ', dataSelect)
@@ -112,7 +118,8 @@ class ManageDoctor extends Component {
         }
 
         if (prevProps.allRequiredDoctorInfor !== this.props.allRequiredDoctorInfor) {
-            //console.log(">>>> hoidanit get data from redux - allRequiredDoctorInfor: ", this.props.allRequiredDoctorInfor);
+
+            console.log(">>>> hoidanit get data from redux - allRequiredDoctorInfor: ", this.props.allRequiredDoctorInfor);
             let { resPayment, resPrice, resProvince } = this.props.allRequiredDoctorInfor;
             let dataSelectPayment = this.buildDataInputSelect(resPayment, 'PAYMENT');
             let dataSelectPrice = this.buildDataInputSelect(resPrice, 'PRICE');
@@ -127,10 +134,36 @@ class ManageDoctor extends Component {
             })
         }
 
-        if (prevProps.language !== this.props.language) {
+        if (prevProps.language !== this.props.language && this.props.allRequiredDoctorInfor) {
+            this.setState(
+                {
+                    contentMarkdown: '',
+                    contentHTML: '',
+                    selectedOption: '',
+                    description: '',
+                    listDoctors: [],
+                    hasOldData: false,
+                    action: '',
+                    // save to doctor_info table
+                    listPrice: [],
+                    listPayment: [],
+                    listProvince: [],
+                    selectedPrice: '',
+                    selectedPayment: '',
+                    selectedProvince: '',
+                    nameClinic: '',
+                    addressClinic: '',
+                    note: ''
+
+                }
+            );
+
             let dataSelect = this.buildDataInputSelect(this.props.allDoctors, 'USERS')
             // console.log('check dataselect: ', dataSelect)
+
             let { resPayment, resPrice, resProvince } = this.props.allRequiredDoctorInfor;
+            console.log('>>>>>>>>>>> gia tri state:', this.state);
+            console.log(">>>>>>>>>:resPayment, resPrice, resProvince,language chose:", resPayment, resPrice, resProvince, this.props.language);
             let dataSelectPayment = this.buildDataInputSelect(resPayment, 'PAYMENT');
             let dataSelectPrice = this.buildDataInputSelect(resPrice, 'PRICE');
             let dataSelectProvince = this.buildDataInputSelect(resProvince, 'PROVINCE');
@@ -142,6 +175,7 @@ class ManageDoctor extends Component {
             })
 
         }
+
     }
 
     handleEditorChange = ({ html, text }) => {
@@ -179,18 +213,57 @@ class ManageDoctor extends Component {
             res.data.Markdown.contentHTML && res.data.Markdown.contentHTML &&
             res.data.Markdown.description) {
             let markdown = res.data.Markdown;
+
+            let addressClinic = '', nameClinic = '', note = '',
+                paymentId = '', priceId = '', provinceId = '',
+                selectedPrice = '', selectedProvince = '', selectedPayment = '';
+            let { listPrice, listPayment, listProvince } = this.state;
+
+            if (res.data.Doctor_Infor) {
+                addressClinic = res.data.Doctor_Infor.addressClinic;
+                nameClinic = res.data.Doctor_Infor.nameClinic;
+                note = res.data.Doctor_Infor.note;
+                paymentId = res.data.Doctor_Infor.paymentId;
+                priceId = res.data.Doctor_Infor.priceId;
+                provinceId = res.data.Doctor_Infor.provinceId;
+
+                selectedPrice = listPrice.find(item => {
+                    return item && item.value === priceId
+                })
+
+                selectedPayment = listPayment.find(item => {
+                    return item && item.value === paymentId
+                })
+
+                selectedProvince = listProvince.find(item => {
+                    return item && item.value === provinceId
+                })
+            }
+
             this.setState({
                 contentHTML: markdown.contentHTML,
                 contentMarkdown: markdown.contentMarkdown,
                 description: markdown.description,
-                hasOldData: true
+                hasOldData: true,
+                addressClinic: addressClinic,
+                nameClinic: nameClinic,
+                note: note,
+                selectedPrice: selectedPrice,
+                selectedPayment: selectedPayment,
+                selectedProvince: selectedProvince
             })
         } else {
             this.setState({
                 contentHTML: '',
                 contentMarkdown: '',
                 description: '',
-                hasOldData: false
+                hasOldData: false,
+                addressClinic: '',
+                nameClinic: '',
+                note: '',
+                selectedPrice: '',
+                selectedPayment: '',
+                selectedProvince: ''
             })
         }
         console.log('>>>>>>>>>>>>gia tri da chon: ', selectedOption);
@@ -233,7 +306,7 @@ class ManageDoctor extends Component {
                     <div className='content-left form-group'>
                         <label><FormattedMessage id="admin.manage-doctor.select-doctor" /></label>
                         <Select
-                            //value={this.state.selectedDoctor}
+                            value={this.state.selectedOption}
                             //  onChange={(selectedOption) => this.handleChangeSelect(selectedOption)}
                             onChange={this.handleChangeSelect}
                             options={this.state.listDoctors}

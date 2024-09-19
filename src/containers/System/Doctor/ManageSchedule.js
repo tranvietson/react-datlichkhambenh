@@ -53,9 +53,10 @@ class ManageSchedule extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
+        //  console.log('fetch state list of Doctor in ManageSchedule page:', this.props.allDoctors)
         if (prevProps.allDoctors !== this.props.allDoctors) {
             let dataSelect = this.buildDataInputSelect(this.props.allDoctors)
-            console.log('check dataselect: ', dataSelect)
+            console.log('fetch state of doctor after through rebuild function : ', dataSelect)
             this.setState({
                 listDoctors: dataSelect
             })
@@ -110,11 +111,11 @@ class ManageSchedule extends Component {
     // }
 
     setStartDate = (date) => {
-        let newDate = moment(date).format(dateFormat.SEND_TO_SERVER);
-        // let formatDate = moment(currentDate).unix();
-        //let abc = new Date(date[0]).getTime();
-        console.log('>>>>>>>>>>> selected date is:', newDate);
-        console.log('>>>>>>>>>>> type of the selected date is:', typeof newDate);
+        // let newDate = moment(date).format(dateFormat.SEND_TO_SERVER);
+        // // let formatDate = moment(currentDate).unix();
+        // //let abc = new Date(date[0]).getTime();
+        // console.log('>>>>>>>>>>> selected date is:', newDate);
+        // console.log('>>>>>>>>>>> type of the selected date is:', typeof newDate);
 
         this.setState({
             startDate: date
@@ -122,7 +123,7 @@ class ManageSchedule extends Component {
     }
 
     handleClickBtnTime = (time) => {
-        // console.log('>>>>> check gia tri item click:', time);
+        console.log('>>>>> check gia tri item click:', time);
         let { rangeTime } = this.state;
         if (rangeTime && rangeTime.length > 0) {
             rangeTime = rangeTime.map(item => {
@@ -133,7 +134,7 @@ class ManageSchedule extends Component {
         this.setState({
             rangeTime: rangeTime
         })
-        // console.log('>>>>>>>>>> gia tri moi sau khi duoc click:', rangeTime);
+        console.log('>>>>>>>>>> gia tri moi sau khi duoc click:', this.state.rangeTime);
     }
 
     handleSaveSchedule = async () => {
