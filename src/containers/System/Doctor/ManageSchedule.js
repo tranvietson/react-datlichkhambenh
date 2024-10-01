@@ -231,7 +231,11 @@ class ManageSchedule extends Component {
                                 value={this.state.currentDate}
                                 minDate={new Date()}
                             /> */}
-                            <DatePicker minDate={yesterday} selected={startDate} onChange={(date) => this.setStartDate(date)} />
+                            <DatePicker
+                                minDate={yesterday}
+                                selected={startDate}
+                                onChange={(date) => this.setStartDate(date)}
+                            />
                         </div>
                         <div className='col-12 pick-hour-container'>
                             {rangeTime && rangeTime.length > 0 &&
