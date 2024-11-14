@@ -40,7 +40,7 @@
 
 .section-share {
     &.section-specialty {
-        background: #dea0a0;
+        //background: #dea0a0;
     }
 
     &.section-outstanding-doctor {
@@ -54,12 +54,12 @@
     }
 
     .section-body {
-        border: 1px solid magenta;
+        // border: 1px solid magenta;
 
         .section-customize {
             .cover {
                 margin: auto 30;
-                border: 1px solid magenta;
+                //  border: 1px solid magenta;
             }
 
             .bg-image {
@@ -73,7 +73,7 @@
                 background-color: #eee;
 
                 &.section-specialty {
-                    background-image: url('../../assets/specialty/co-xuong-khop.jpg');
+                    // background-image: url('../../assets/specialty/co-xuong-khop.jpg');
                     width: 278px;
                     height: 150px;
                 }
@@ -90,7 +90,7 @@
                     width: 150px;
                     display: flex;
                     justify-content: center;
-                    border: 1px solid orangered;
+                    //  border: 1px solid orangered;
                     border-radius: 50%;
                     margin-bottom: 10px;
                 }
@@ -162,7 +162,7 @@
         cursor: pointer;
 
         .customize-border {
-            border: 1px solid orange;
+            //  border: 1px solid orange;
             padding: 20px;
         }
     }
@@ -170,7 +170,7 @@
 
 .home-footer {
     text-align: center;
-    border: 1px solid orangered;
+    // border: 1px solid orangered;
     padding-top: 8px;
 
     a {
